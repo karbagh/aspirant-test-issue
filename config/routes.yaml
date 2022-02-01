@@ -1,0 +1,6 @@
+main:
+  method: 'get'
+  path: ~
+  controller: App\Controller\HomeController
+  action: index
+

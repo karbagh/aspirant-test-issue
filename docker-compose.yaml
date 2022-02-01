@@ -1,0 +1,25 @@
+version: '3.7'
+
+services:
+  app:
+    build:
+      dockerfile: docker/php-dev.Dockerfile
+      context: .
+    volumes:
+      - .:/var/www/app
+    environment:
+      COMPOSER_MEMORY_LIMIT: -1
+      COMPOSER_ALLOW_SUPERUSER: 1
+      APP_ENV: 'dev'
+    ports:
+      - 8080:8080
+
+  database:
+    image: mysql:5.7
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+      MYSQL_DATABASE: slim_project
+      MYSQL_USER: webmaster
+      MYSQL_PASSWORD: webmaster
