@@ -4,13 +4,29 @@
 
 {% block content %}
     <div class="container">
-        <h1 class="mt-5 mb-4">{{ trailers | length }} iTunes Movie trailers</h1>
-        <table class="table table-bordered">
-            {% for trailer in trailers %}
-                <tr>
-                    <td>{{ trailer.title }}</td>
-                </tr>
-            {% endfor %}
-        </table>
+        <div class="col-12">
+            <h5>Current Time is: {{ currentTime }}</h5>
+            <h5>Current Controller is: {{ currentController }}</h5>
+            <h5>Current Method is: {{ currentMethod }}</h5>
+        </div>
+
+        <div class="col-12 my-4">
+            <h1 class="text-center">{{ trailers | length }} iTunes Movie trailers</h1>
+            <div class="row my-5">
+                {% for trailer in trailers %}
+                    <div class="col-3 my-3">
+                        <div class="card" style="min-height: 550px;">
+                            <img class="card-img-top" src="{{ trailer.image }}" alt="Card image cap">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ trailer.title }}</h5>
+                                <p class="card-text"
+                                   style="height: 100%; text-overflow: ellipsis;white-space: nowrap; overflow: hidden;">{{ trailer.description }}</p>
+                                <a href="{{ app.request.getBaseURL() }}/movies?id={{ (trailer.id) }}" class="btn btn-primary position-absolute" style="bottom: 25px">Open page</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
     </div>
 {% endblock %}

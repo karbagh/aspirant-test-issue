@@ -3,29 +3,41 @@
 namespace App\Controller;
 
 use App\Entity\Movie;
+use App\Services\Apple\Trailers\AppleTrailerDBService;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
+use Illuminate\Support\Facades\Request;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Slim\Exception\HttpBadRequestException;
 use Slim\Interfaces\RouteCollectorInterface;
+use Slim\Routing\RouteCollector;
 use Twig\Environment;
 
-class HomeController
+final class HomeController extends Controller
 {
+    private AppleTrailerDBService $appleTrailerDBService;
+
     public function __construct(
         private RouteCollectorInterface $routeCollector,
         private Environment $twig,
-        private EntityManagerInterface $em
-    ) {}
+        private EntityManagerInterface $em,
+        private RouteCollector $collector
+    ) {
+        $this->appleTrailerDBService = new AppleTrailerDBService();
+    }
 
-    public function index(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    public function index(
+        ServerRequestInterface $request,
+        ResponseInterface $response
+    ): ResponseInterface
     {
         try {
-            $data = $this->twig->render('home/index.html.twig', [
-                'trailers' => $this->fetchData(),
-            ]);
+            $data = $this->twig->render('home/index.html.twig', $this->mergeWithData([
+                'trailers' => $this->appleTrailerDBService->getAll($this->em),
+            ],
+            'index'));
         } catch (\Exception $e) {
             throw new HttpBadRequestException($request, $e->getMessage(), $e);
         }
@@ -35,11 +47,20 @@ class HomeController
         return $response;
     }
 
-    protected function fetchData(): Collection
-    {
-        $data = $this->em->getRepository(Movie::class)
-            ->findAll();
+    public function show(
+        ServerRequestInterface $request,
+        ResponseInterface $response
+    ): ResponseInterface {
+        try {
+            $data = $this->twig->render('home/movie/index.html.twig', $this->mergeWithData([
+                'trailer' => $this->appleTrailerDBService->show((int) $_REQUEST['id'], $this->em),
+            ],
+                'index'));
+        } catch (\Exception $e) {
+            throw new HttpBadRequestException($request, $e->getMessage(), $e);
+        }
+        $response->getBody()->write($data);
 
-        return new ArrayCollection($data);
+        return $response;
     }
 }

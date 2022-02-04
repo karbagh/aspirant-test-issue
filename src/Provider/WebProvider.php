@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
 use Slim\Interfaces\RouteCollectorInterface;
 use Slim\Interfaces\RouteCollectorProxyInterface;
+use Slim\Routing\RouteCollector;
 use Symfony\Component\Yaml\Yaml;
 use Twig\Environment;
 
@@ -24,7 +25,7 @@ class WebProvider implements ServiceProviderInterface
     protected function defineControllerDi(Container $container): void
     {
         $container->set(HomeController::class, static function (ContainerInterface $container) {
-            return new HomeController($container->get(RouteCollectorInterface::class), $container->get(Environment::class), $container->get(EntityManagerInterface::class));
+            return new HomeController($container->get(RouteCollectorInterface::class), $container->get(Environment::class), $container->get(EntityManagerInterface::class), $container->get(RouteCollector::class));
         });
     }
 

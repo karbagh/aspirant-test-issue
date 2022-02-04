@@ -2,12 +2,12 @@
 
 namespace App\Provider;
 
+use App\Services\Apple\Trailers\AppleTrailerClientService;
+use Doctrine\ORM\EntityManagerInterface;
 use App\Command\{FetchDataCommand, RouteListCommand};
 use App\Container\Container;
 use App\Support\{CommandMap, ServiceProviderInterface};
-use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Client\ClientInterface;
 use Psr\Log\LoggerInterface;
 use Slim\Interfaces\RouteCollectorInterface;
 
@@ -20,7 +20,7 @@ class ConsoleCommandProvider implements ServiceProviderInterface
         });
 
         $container->set(FetchDataCommand::class, static function (ContainerInterface $container) {
-            return new FetchDataCommand($container->get(ClientInterface::class), $container->get(LoggerInterface::class), $container->get(EntityManagerInterface::class));
+            return new FetchDataCommand($container->get(LoggerInterface::class), $container->get(EntityManagerInterface::class));
         });
 
         $container->get(CommandMap::class)->set(RouteListCommand::getDefaultName(), RouteListCommand::class);

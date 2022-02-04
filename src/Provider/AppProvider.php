@@ -22,11 +22,14 @@ use Slim\{CallableResolver,
     Routing\RouteCollector,
     Routing\RouteResolver};
 use Twig\Environment;
+use Symfony\Component\Debug\Debug;
 
 class AppProvider implements ServiceProviderInterface
 {
     public function register(Container $container): void
     {
+        Debug::enable();
+
         // Console commands
         $container->set(CommandMap::class, static function () {
             return new CommandMap();
